@@ -15,7 +15,10 @@ public class SqlArgs {
   }
 
   public String list(Object... vv) {
-    if (vv.length == 0) throw new IllegalArgumentException();
+    if (vv.length == 0) {
+      // because `IN ()` gives a syntax error in SQL
+      throw new IllegalArgumentException();
+    }
     Collections.addAll(args, vv);
     return "(" + ",?".repeat(vv.length).substring(1) + ")";
   }

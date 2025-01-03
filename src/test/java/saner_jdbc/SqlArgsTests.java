@@ -74,6 +74,11 @@ public class SqlArgsTests {
     }
   }
 
+  @Test
+  void testListEmpty() {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new SqlArgs().list());
+  }
+
   private static String getResultingSql(PreparedStatement statement) {
     String res = statement.toString();
     int i = res.indexOf(": SELECT");
