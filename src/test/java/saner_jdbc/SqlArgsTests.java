@@ -37,9 +37,9 @@ public class SqlArgsTests {
         };
     try (Connection conn = getConnection()) {
       for (Case aCase : cases) {
-        SqlArgs s = new SqlArgs();
-        try (PreparedStatement statement = conn.prepareStatement("SELECT " + s.arg(aCase.arg))) {
-          s.setArgs(statement);
+        SqlArgs $ = new SqlArgs();
+        try (PreparedStatement statement = conn.prepareStatement("SELECT " + $.arg(aCase.arg))) {
+          $.setArgs(statement);
           Assertions.assertEquals("SELECT " + aCase.result, getResultingSql(statement));
         }
       }
@@ -50,10 +50,10 @@ public class SqlArgsTests {
   void testList() throws SQLException {
     try (Connection conn = getConnection()) {
       {
-        SqlArgs s = new SqlArgs();
+        SqlArgs $ = new SqlArgs();
         try (PreparedStatement statement =
-            conn.prepareStatement("SELECT 1 WHERE 1 IN " + s.list(1, 2, 3))) {
-          s.setArgs(statement);
+            conn.prepareStatement("SELECT 1 WHERE 1 IN " + $.list(1, 2, 3))) {
+          $.setArgs(statement);
           Assertions.assertEquals("SELECT 1 WHERE 1 IN (1,2,3)", getResultingSql(statement));
           try (ResultSet resultSet = statement.executeQuery()) {
             Assertions.assertTrue(resultSet.next());
@@ -61,10 +61,10 @@ public class SqlArgsTests {
         }
       }
       {
-        SqlArgs s = new SqlArgs();
+        SqlArgs $ = new SqlArgs();
         try (PreparedStatement statement =
-            conn.prepareStatement("SELECT 1 WHERE 7 IN " + s.list(1, 2, 3))) {
-          s.setArgs(statement);
+            conn.prepareStatement("SELECT 1 WHERE 7 IN " + $.list(1, 2, 3))) {
+          $.setArgs(statement);
           Assertions.assertEquals("SELECT 1 WHERE 7 IN (1,2,3)", getResultingSql(statement));
           try (ResultSet resultSet = statement.executeQuery()) {
             Assertions.assertFalse(resultSet.next());
