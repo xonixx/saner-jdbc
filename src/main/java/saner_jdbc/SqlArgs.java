@@ -20,11 +20,27 @@ import java.util.List;
 public class SqlArgs {
   private final List<Object> args = new ArrayList<>();
 
+  /**
+   * Use this to provide a single prepared statement argument.
+   *
+   * @param v argument value (any common Java type works)
+   * @return <code>"?"</code> for JDBC placeholder
+   */
   public String arg(Object v) {
     args.add(v);
     return "?";
   }
 
+  /**
+   * Use this to provide a list of prepared statement arguments to be used in <code>IN (...)</code>
+   * query.
+   *
+   * <p>NB! At least one argument is required, because empty <code>IN ()</code> is a syntax error in
+   * SQL.
+   *
+   * @param vv list of argument values (any common Java type works)
+   * @return <code>"(?,?,?)"</code>
+   */
   public String list(Object... vv) {
     if (vv.length == 0) {
       // because `IN ()` gives a syntax error in SQL
@@ -34,6 +50,7 @@ public class SqlArgs {
     return "(" + ",?".repeat(vv.length).substring(1) + ")";
   }
 
+  /** Populates a prepared statement with arguments provided via {@link #arg} and {@link #list}. */
   public void setArgs(PreparedStatement statement) throws SQLException {
     int idx = 0;
     for (Object arg : args) {
