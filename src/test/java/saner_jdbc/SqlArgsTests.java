@@ -3,6 +3,8 @@ package saner_jdbc;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -64,6 +66,34 @@ public class SqlArgsTests {
         SqlArgs $ = new SqlArgs();
         try (PreparedStatement statement =
             conn.prepareStatement("SELECT 1 WHERE 7 IN " + $.list(1, 2, 3))) {
+          $.setArgs(statement);
+          Assertions.assertEquals("SELECT 1 WHERE 7 IN (1,2,3)", getResultingSql(statement));
+          try (ResultSet resultSet = statement.executeQuery()) {
+            Assertions.assertFalse(resultSet.next());
+          }
+        }
+      }
+    }
+  }
+
+  @Test
+  void testList1() throws SQLException {
+    try (Connection conn = getConnection()) {
+      {
+        SqlArgs $ = new SqlArgs();
+        try (PreparedStatement statement =
+            conn.prepareStatement("SELECT 1 WHERE 1 IN " + $.list(List.of(1, 2, 3)))) {
+          $.setArgs(statement);
+          Assertions.assertEquals("SELECT 1 WHERE 1 IN (1,2,3)", getResultingSql(statement));
+          try (ResultSet resultSet = statement.executeQuery()) {
+            Assertions.assertTrue(resultSet.next());
+          }
+        }
+      }
+      {
+        SqlArgs $ = new SqlArgs();
+        try (PreparedStatement statement =
+            conn.prepareStatement("SELECT 1 WHERE 7 IN " + $.list(List.of(1, 2, 3)))) {
           $.setArgs(statement);
           Assertions.assertEquals("SELECT 1 WHERE 7 IN (1,2,3)", getResultingSql(statement));
           try (ResultSet resultSet = statement.executeQuery()) {

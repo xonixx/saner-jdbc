@@ -3,6 +3,7 @@ package saner_jdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,6 +49,20 @@ public class SqlArgs {
     }
     Collections.addAll(args, vv);
     return "(" + ",?".repeat(vv.length).substring(1) + ")";
+  }
+
+  /**
+   * Use this to provide a list of prepared statement arguments to be used in <code>IN (...)</code>
+   * query.
+   *
+   * <p>NB! At least one argument is required, because empty <code>IN ()</code> is a syntax error in
+   * SQL.
+   *
+   * @param col list of argument values (any common Java type works)
+   * @return <code>"(?,?,?)"</code>
+   */
+  public String list(Collection<?> col) {
+    return list(col.toArray());
   }
 
   /** Populates a prepared statement with arguments provided via {@link #arg} and {@link #list}. */
